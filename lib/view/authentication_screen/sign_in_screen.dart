@@ -31,6 +31,7 @@ class SignInScreen extends StatelessWidget {
             horizontal: context.width * 0.02, vertical: context.height * 0.02),
         child: Form(
           key: formKey1,
+          autovalidateMode: AutovalidateMode.onUserInteraction,
           child: SingleChildScrollView(
               child: context.isPortrait
                   ? Column(
@@ -39,8 +40,17 @@ class SignInScreen extends StatelessWidget {
                         passwordWidget(c),
                         forgetPasswordWidget(),
                         kHeight(context.height * 0.18),
-                        const CustomAuthButton(title: "Sign In"),
-                        signUpNewAccountWidget()
+                        CustomAuthButton(
+                          title: "Sign In",
+                          onTap: () async {
+                            if (formKey1.currentState!.validate()) {
+                              await c.signInWithEmailAndPassword();
+                            } else {
+                              Get.snackbar("Error",
+                                  "You need to fill all the fields correctly");
+                            }
+                          },
+                        ),
                       ],
                     )
                   : Column(
@@ -60,11 +70,18 @@ class SignInScreen extends StatelessWidget {
                             SizedBox(
                                 width: context.width * 0.3,
                                 height: 50,
-                                child:
-                                    const CustomAuthButton(title: "Sign In")),
+                                child: CustomAuthButton(
+                                    onTap: () async {
+                                      if (formKey1.currentState!.validate()) {
+                                        await c.signInWithEmailAndPassword();
+                                      } else {
+                                        Get.snackbar("Error",
+                                            "You need to fill all the fields correctly");
+                                      }
+                                    },
+                                    title: "Sign In")),
                           ],
                         ),
-                        signUpNewAccountWidget()
                       ],
                     )),
         ),

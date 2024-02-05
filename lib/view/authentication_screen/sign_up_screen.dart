@@ -1,6 +1,5 @@
 import 'package:chatter/controller/auth_controller.dart';
 import 'package:chatter/utils/custom_sizedbox.dart';
-import 'package:chatter/view/authentication_screen/sign_in_screen.dart';
 import 'package:chatter/widgets/auth_screen_widgets/auth_screen_widget.dart';
 import 'package:chatter/widgets/global/loading_widget.dart';
 import 'package:chatter/widgets/text_widget.dart';
@@ -52,9 +51,9 @@ class SignUpScreen extends StatelessWidget {
                                       return c.selectedImage?.value != null
                                           ? CircleAvatar(
                                               radius: 70,
-                                              child: Image(
-                                                  image: FileImage(
-                                                      c.selectedImage!.value!)))
+                                              backgroundImage: FileImage(
+                                                  c.selectedImage!.value!),
+                                            )
                                           : const CircleAvatar(
                                               radius: 70,
                                               child: Text("select picture"));
@@ -90,77 +89,56 @@ class SignUpScreen extends StatelessWidget {
                                   }
                                 },
                               ),
-                              alreadyAccountWidget()
                             ],
                           )
-                        : Column(
-                            children: [
-                              Row(
+                        : Obx(() {
+                            return LoadingOverlay(
+                              isLoading: c.isloading.value,
+                              child: Column(
                                 children: [
-                                  Expanded(child: userNameWidget(c)),
-                                  kWidth(10),
-                                  Expanded(child: emailWidget(c)),
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  Expanded(child: passwordWidget(c)),
-                                  kWidth(10),
-                                  Expanded(child: cPasswordWidget(c)),
-                                ],
-                              ),
-                              Obx(() {
-                                return Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    SizedBox(
-                                      width: context.width * 0.3,
-                                      height: 50,
-                                      child: CustomAuthButton(
-                                        title: "Sign up",
-                                        onTap: () async {
-                                          if (formKey.currentState!
-                                              .validate()) {
-                                            await c
-                                                .registerUserWithEmailAndPassword();
-                                          } else {
-                                            Get.snackbar(
-                                                "Error", "Check all fields");
-                                          }
-                                        },
+                                  Row(
+                                    children: [
+                                      Expanded(child: userNameWidget(c)),
+                                      kWidth(10),
+                                      Expanded(child: emailWidget(c)),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      Expanded(child: passwordWidget(c)),
+                                      kWidth(10),
+                                      Expanded(child: cPasswordWidget(c)),
+                                    ],
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      SizedBox(
+                                        width: context.width * 0.3,
+                                        height: 50,
+                                        child: CustomAuthButton(
+                                          title: "Sign up",
+                                          onTap: () async {
+                                            if (formKey.currentState!
+                                                .validate()) {
+                                              await c
+                                                  .registerUserWithEmailAndPassword();
+                                            } else {
+                                              Get.snackbar(
+                                                  "Error", "Check all fields");
+                                            }
+                                          },
+                                        ),
                                       ),
-                                    ),
-                                  ],
-                                );
-                              }),
-                              alreadyAccountWidget()
-                            ],
-                          )),
+                                    ],
+                                  )
+                                ],
+                              ),
+                            );
+                          })),
               ),
             );
           })),
-    );
-  }
-
-  Row alreadyAccountWidget() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        CustomTextWidget(
-          text: "already have account?",
-          fontSize: 15,
-        ),
-        TextButton.icon(
-            onPressed: () {
-              Get.offAll(() => SignInScreen());
-              Get.delete<AuthenticationController>();
-            },
-            icon: const Icon(Icons.login),
-            label: CustomTextWidget(
-              text: "Login",
-              fontSize: 15,
-            ))
-      ],
     );
   }
 }

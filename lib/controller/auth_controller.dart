@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:chatter/view/authentication_screen/sign_in_screen.dart';
+import 'package:chatter/view/home_screen/home_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -124,8 +125,9 @@ class AuthenticationController extends GetxController {
           email: emailCtr.text.toLowerCase().trim(),
           password: passwordCtr.text.trim());
       isloading(false);
-
       Get.snackbar("Success", "Login successful");
+      Get.delete<AuthenticationController>();
+      Get.offAll(() => MyHomeScreen());
     } on FirebaseAuthException catch (error) {
       Get.snackbar("Something Messed up", error.code);
     } catch (e) {

@@ -5,8 +5,6 @@ import 'package:chatter/widgets/text_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../view/authentication_screen/sign_up_screen.dart';
-
 Column cPasswordWidget(AuthenticationController c) {
   return Column(
     children: [
@@ -62,26 +60,6 @@ Column userNameWidget(AuthenticationController c) {
           textInputAction: TextInputAction.next,
           keyboardType: TextInputType.name,
           controller: c.userNameCtr),
-    ],
-  );
-}
-
-Row signUpNewAccountWidget() {
-  return Row(
-    mainAxisAlignment: MainAxisAlignment.end,
-    children: [
-      CustomTextWidget(
-        text: "Dont Have an account sign Up!",
-      ),
-      TextButton.icon(
-          onPressed: () {
-            Get.offAll(() => SignUpScreen());
-            Get.delete<AuthenticationController>();
-          },
-          icon: const Icon(Icons.login),
-          label: CustomTextWidget(
-            text: "Sign up",
-          )),
     ],
   );
 }
