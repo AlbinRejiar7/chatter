@@ -108,16 +108,8 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
                                         'hero-tag-${snapshot.data![index].name}',
                                     child: CircleAvatar(
                                       radius: 25,
-                                      backgroundImage: NetworkImage(snapshot
-                                                      .data![index]
-                                                      .profileImage ==
-                                                  null ||
-                                              snapshot.data![index]
-                                                      .profileImage ==
-                                                  ""
-                                          ? "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"
-                                          : snapshot
-                                              .data![index].profileImage!),
+                                      backgroundImage: NetworkImage(
+                                          snapshot.data![index].profileImage!),
                                     ),
                                   ),
                                   title: Text(

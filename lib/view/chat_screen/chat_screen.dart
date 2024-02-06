@@ -73,32 +73,28 @@ class MyChatScreen extends StatelessWidget {
             child: Column(
               children: [
                 Expanded(
-                  child: Builder(builder: (context) {
-                    return StreamBuilder(
-                      stream: chatc.getMessage(
-                          authInstance.currentUser!.uid, receiverId),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasError) {
-                          return Center(
-                              child: Text("Error${snapshot.error.toString()}"));
-                        } else if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return Center(
-                            child: Text("Loading..."),
-                          );
-                        } else {
-                          return ListView(
-                              shrinkWrap: true,
-                              reverse: true,
-                              children: snapshot.data!.docs
-                                  .map((e) => messageItem(e))
-                                  .toList()
-                                  .reversed
-                                  .toList());
-                        }
-                      },
-                    );
-                  }),
+                  child: StreamBuilder(
+                    stream: chatc.getMessage(
+                        authInstance.currentUser!.uid, receiverId),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasError) {
+                        return Center(
+                            child: Text(
+                          "Error${snapshot.error.toString()}",
+                          style: TextStyle(color: customWhite),
+                        ));
+                      } else {
+                        return ListView(
+                            shrinkWrap: true,
+                            reverse: true,
+                            children: snapshot.data!.docs
+                                .map((e) => messageItem(e))
+                                .toList()
+                                .reversed
+                                .toList());
+                      }
+                    },
+                  ),
                 ),
                 CustomTextFormField(
                   fillColor: Color.fromARGB(141, 19, 216, 124),
