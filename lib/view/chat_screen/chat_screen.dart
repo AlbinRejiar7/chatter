@@ -22,7 +22,6 @@ class MyChatScreen extends StatelessWidget {
 
     return Scaffold(
         extendBodyBehindAppBar: true,
-        resizeToAvoidBottomInset: true,
         appBar: AppBar(
           toolbarHeight: 100.0,
           automaticallyImplyLeading: false,
@@ -74,29 +73,32 @@ class MyChatScreen extends StatelessWidget {
             child: Column(
               children: [
                 Expanded(
-                  child: StreamBuilder(
-                    stream: chatc.getMessage(
-                        authInstance.currentUser!.uid, receiverId),
-                    builder: (context, snapshot) {
-                      if (snapshot.hasError) {
-                        return Center(
-                            child: Text("Error${snapshot.error.toString()}"));
-                      } else if (snapshot.connectionState ==
-                          ConnectionState.waiting) {
-                        return Center(
-                          child: Text("Loading..."),
-                        );
-                      } else {
-                        return ListView(
-                            reverse: true,
-                            children: snapshot.data!.docs
-                                .map((e) => messageItem(e))
-                                .toList()
-                                .reversed
-                                .toList());
-                      }
-                    },
-                  ),
+                  child: Builder(builder: (context) {
+                    return StreamBuilder(
+                      stream: chatc.getMessage(
+                          authInstance.currentUser!.uid, receiverId),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasError) {
+                          return Center(
+                              child: Text("Error${snapshot.error.toString()}"));
+                        } else if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return Center(
+                            child: Text("Loading..."),
+                          );
+                        } else {
+                          return ListView(
+                              shrinkWrap: true,
+                              reverse: true,
+                              children: snapshot.data!.docs
+                                  .map((e) => messageItem(e))
+                                  .toList()
+                                  .reversed
+                                  .toList());
+                        }
+                      },
+                    );
+                  }),
                 ),
                 CustomTextFormField(
                   fillColor: Color.fromARGB(141, 19, 216, 124),

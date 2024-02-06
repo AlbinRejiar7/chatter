@@ -45,13 +45,11 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
             );
           }),
           centerTitle: true,
-          title: Obx(() {
-            return CustomTextWidget(
-              text: "${c.currentUserData.value.name} Chats",
-              fontWeight: FontWeight.bold,
-              fontSize: 17,
-            );
-          }),
+          title: CustomTextWidget(
+            text: "Chats",
+            fontWeight: FontWeight.bold,
+            fontSize: 17,
+          ),
           actions: [
             IconButton(
                 onPressed: () {
