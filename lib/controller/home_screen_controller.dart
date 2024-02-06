@@ -45,10 +45,4 @@ class HomeScreenController extends GetxController {
     await getCurrentUserData();
     super.onInit();
   }
-
-  @override
-  void onReady() async {
-    await getCurrentUserData();
-    super.onReady();
-  }
 }

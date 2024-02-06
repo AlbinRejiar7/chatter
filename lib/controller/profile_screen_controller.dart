@@ -34,17 +34,23 @@ class ProfileScreenController extends GetxController {
   }
 
   void changePassword(String currentPassword, String newPassword) async {
-    User user = authInstance.currentUser!;
-    final cred = EmailAuthProvider.credential(
-        email: user.email!, password: currentPassword);
+    try {
+      User user = authInstance.currentUser!;
+      final cred = EmailAuthProvider.credential(
+          email: user.email!, password: currentPassword);
 
-    user.reauthenticateWithCredential(cred).then((value) {
-      user.updatePassword(newPassword).then((_) {
-        Get.snackbar("SUCCESSFULL", 'succesfull');
-      }).catchError((error) {
-        Get.snackbar("SUCCESSFULL", '$error');
+      user.reauthenticateWithCredential(cred).then((value) {
+        user.updatePassword(newPassword).then((_) {
+          Get.snackbar("SUCCESSFULL", 'succesfull');
+        });
       });
-    }).catchError((err) {});
+    } on FirebaseException catch (error) {
+      Get.snackbar("Something wrong", error.code);
+    } finally {
+      newPasswordCtr.clear();
+      currentPasswordCtr.clear();
+      reEnterPasswordCtr.clear();
+    }
   }
 
   void openDialogUpdateUserName(BuildContext context) async {
@@ -58,7 +64,7 @@ class ProfileScreenController extends GetxController {
         child: SingleChildScrollView(
           child: Obx(() {
             return Form(
-              autovalidateMode: AutovalidateMode.always,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
               key: formKey,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -133,6 +139,7 @@ class ProfileScreenController extends GetxController {
   }
 
   void openDialogeUpdatePassword() async {
+    final formKey = GlobalKey<FormState>();
     Get.dialog(Dialog(
       backgroundColor: Colors.transparent,
       child: Container(
@@ -140,45 +147,70 @@ class ProfileScreenController extends GetxController {
         decoration: BoxDecoration(
             color: Colors.white, borderRadius: BorderRadius.circular(20)),
         child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Row(
-                children: [
-                  Center(
-                    child: Text("Update Password"),
-                  ),
-                  CloseButton(),
-                ],
-              ),
-              kHeight(10),
-              CustomTextFormField(
-                  validator: (pass) {
-                    return validation.validatePassword(pass);
-                  },
-                  textInputAction: TextInputAction.done,
-                  keyboardType: TextInputType.name,
-                  controller: currentPasswordCtr,
-                  hintText: "Enter Current Password"),
-              kHeight(10),
-              CustomTextFormField(
-                  textInputAction: TextInputAction.done,
-                  keyboardType: TextInputType.name,
-                  controller: newPasswordCtr,
-                  hintText: "Enter New Password"),
-              const Divider(
-                color: Colors.amberAccent,
-                thickness: 1,
-              ),
-              ElevatedButton(
-                  style: ElevatedButton.styleFrom(backgroundColor: customPink),
-                  onPressed: () async {
-                    changePassword(
-                        currentPasswordCtr.text, newPasswordCtr.text);
-                  },
-                  child: CustomTextWidget(text: "Update Password"))
-            ],
+          child: Form(
+            key: formKey,
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Row(
+                  children: [
+                    Center(
+                      child: Text("Update Password"),
+                    ),
+                    CloseButton(),
+                  ],
+                ),
+                kHeight(10),
+                CustomTextFormField(
+                    validator: (pass) {
+                      return validation.validatePassword(pass);
+                    },
+                    textInputAction: TextInputAction.done,
+                    keyboardType: TextInputType.name,
+                    controller: currentPasswordCtr,
+                    hintText: "Enter Current Password"),
+                kHeight(10),
+                CustomTextFormField(
+                    validator: (pass) {
+                      return validation.validatePassword(pass);
+                    },
+                    textInputAction: TextInputAction.done,
+                    keyboardType: TextInputType.name,
+                    controller: newPasswordCtr,
+                    hintText: "Enter New Password"),
+                kHeight(10),
+                CustomTextFormField(
+                    validator: (pass) {
+                      if (pass != newPasswordCtr.text) {
+                        return "password mismatch";
+                      } else {
+                        return null;
+                      }
+                    },
+                    textInputAction: TextInputAction.done,
+                    keyboardType: TextInputType.name,
+                    controller: reEnterPasswordCtr,
+                    hintText: "Enter Password Again"),
+                const Divider(
+                  color: Colors.amberAccent,
+                  thickness: 1,
+                ),
+                ElevatedButton(
+                    style:
+                        ElevatedButton.styleFrom(backgroundColor: customPink),
+                    onPressed: () async {
+                      if (formKey.currentState!.validate()) {
+                        changePassword(
+                            currentPasswordCtr.text, newPasswordCtr.text);
+                      } else {
+                        Get.snackbar("Error", "enter correctly");
+                      }
+                    },
+                    child: CustomTextWidget(text: "Update Password"))
+              ],
+            ),
           ),
         ),
       ),

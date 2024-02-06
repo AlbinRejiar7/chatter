@@ -1,4 +1,5 @@
 import 'package:chatter/controller/auth_controller.dart';
+import 'package:chatter/controller/home_screen_controller.dart';
 import 'package:chatter/utils/custom_sizedbox.dart';
 import 'package:chatter/widgets/auth_screen_widgets/custom_auth_button.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +16,7 @@ class SignInScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var c = Get.put(AuthenticationController());
+    var userdata = Get.put(HomeScreenController());
 
     return Scaffold(
       appBar: AppBar(
@@ -74,6 +76,7 @@ class SignInScreen extends StatelessWidget {
                                     onTap: () async {
                                       if (formKey1.currentState!.validate()) {
                                         await c.signInWithEmailAndPassword();
+                                        await userdata.getCurrentUserData();
                                       } else {
                                         Get.snackbar("Error",
                                             "You need to fill all the fields correctly");

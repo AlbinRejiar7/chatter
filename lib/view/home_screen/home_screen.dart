@@ -2,6 +2,7 @@
 
 import 'package:chatter/controller/home_screen_controller.dart';
 import 'package:chatter/utils/custom_sizedbox.dart';
+import 'package:chatter/view/chat_screen/chat_screen.dart';
 import 'package:chatter/view/profile_page/profile_page.dart';
 import 'package:chatter/widgets/auth_screen_widgets/custom_text_field.dart';
 import 'package:chatter/widgets/text_widget.dart';
@@ -9,8 +10,22 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class MyHomeScreen extends StatelessWidget {
+class MyHomeScreen extends StatefulWidget {
   const MyHomeScreen({super.key});
+
+  @override
+  State<MyHomeScreen> createState() => _MyHomeScreenState();
+}
+
+class _MyHomeScreenState extends State<MyHomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(Durations.short4, () async {
+      var controller = Get.put(HomeScreenController());
+      await controller.getCurrentUserData();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,13 +34,15 @@ class MyHomeScreen extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(
           leading: Obx(() {
-            return c.currentUserData.value.profileImage != null
-                ? CircleAvatar(
-                    radius: 20,
-                    backgroundImage:
-                        NetworkImage(c.currentUserData.value.profileImage!),
-                  )
-                : CircularProgressIndicator();
+            return CircleAvatar(
+              radius: 20,
+              backgroundImage: NetworkImage(c
+                              .currentUserData.value.profileImage ==
+                          "" ||
+                      c.currentUserData.value.profileImage == null
+                  ? "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"
+                  : c.currentUserData.value.profileImage!),
+            );
           }),
           centerTitle: true,
           title: Obx(() {
@@ -80,17 +97,30 @@ class MyHomeScreen extends StatelessWidget {
                               itemCount: snapshot.data!.length,
                               itemBuilder: (BuildContext context, int index) {
                                 return ListTile(
-                                  leading: CircleAvatar(
-                                    radius: 25,
-                                    backgroundImage: NetworkImage(snapshot
-                                                    .data![index]
-                                                    .profileImage ==
-                                                null ||
-                                            snapshot.data![index]
-                                                    .profileImage ==
-                                                ""
-                                        ? "https://firebasestorage.googleapis.com/v0/b/chattingapp-4e42e.appspot.com/o/profileimage%2FCmg9M5Bbvoc3De8pqi0v0GMiM6z2.jpg?alt=media&token=https://firebasestorage.googleapis.com/v0/b/chattingapp-4e42e.appspot.com/o/profileimage%2Fdp.jpg?alt=media&token=b20d494f-8620-416d-b2d7-b4bc67c1e556"
-                                        : snapshot.data![index].profileImage!),
+                                  onTap: () {
+                                    Get.to(() => MyChatScreen(), arguments: {
+                                      "current_user_img":
+                                          snapshot.data![index].profileImage,
+                                      "username": snapshot.data![index].name,
+                                      "otherUserId": snapshot.data![index].id,
+                                    });
+                                  },
+                                  leading: Hero(
+                                    tag:
+                                        'hero-tag-${snapshot.data![index].name}',
+                                    child: CircleAvatar(
+                                      radius: 25,
+                                      backgroundImage: NetworkImage(snapshot
+                                                      .data![index]
+                                                      .profileImage ==
+                                                  null ||
+                                              snapshot.data![index]
+                                                      .profileImage ==
+                                                  ""
+                                          ? "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"
+                                          : snapshot
+                                              .data![index].profileImage!),
+                                    ),
                                   ),
                                   title: Text(
                                     snapshot.data?[index].name ?? "loading..",

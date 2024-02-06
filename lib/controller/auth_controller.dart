@@ -74,7 +74,7 @@ class AuthenticationController extends GetxController {
 
   //----------------------------------------------registering user in firebase
   Future<void> registerUserWithEmailAndPassword() async {
-    String? imageUrl = "";
+    String? imageUrl;
     isloading(true);
     try {
       await authInstance.createUserWithEmailAndPassword(
@@ -89,14 +89,14 @@ class AuthenticationController extends GetxController {
       if (selectedImage?.value != null) {
         await ref.putFile(selectedImage!.value!);
         imageUrl = await ref.getDownloadURL();
-        print(imageUrl);
       }
 
       await FirebaseFirestore.instance.collection("users").doc(uid).set({
         "id": uid,
         "name": userNameCtr.text,
         "email": emailCtr.text.toLowerCase(),
-        "profileimage": imageUrl,
+        "profileimage": imageUrl ??
+            "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
         "createdAt": Timestamp.now()
       });
       isloading(false);

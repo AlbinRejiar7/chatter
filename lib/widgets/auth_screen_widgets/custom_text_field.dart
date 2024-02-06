@@ -17,6 +17,8 @@ class CustomTextFormField extends StatelessWidget {
     required this.hintText,
     this.filled = true,
     this.fillColor = const Color.fromARGB(106, 202, 167, 167),
+    this.hintStyleColor = Colors.black,
+    this.textColor = Colors.black,
   });
   final String hintText;
   final bool? filled;
@@ -32,39 +34,39 @@ class CustomTextFormField extends StatelessWidget {
   final FocusNode? focusNode;
   final void Function()? onEditingComplete;
   final Color? fillColor;
+  final Color? hintStyleColor;
+  final Color? textColor;
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 20),
-      child: TextFormField(
-        controller: controller,
-        keyboardType: keyboardType,
-        textInputAction: textInputAction,
-        focusNode: focusNode,
-        onChanged: onChanged,
-        autofocus: autofocus ?? false,
-        validator: validator,
-        obscureText: obscureText!,
-        obscuringCharacter: '*',
-        onEditingComplete: onEditingComplete,
-        decoration: InputDecoration(
-          fillColor: fillColor,
-          filled: filled,
-          contentPadding: EdgeInsets.all(15),
-          isCollapsed: true,
-          isDense: true,
-          labelText: labelText,
-          hintText: hintText,
-          suffixIcon: suffixIcon,
-          border: OutlineInputBorder(
-              borderSide: BorderSide.none,
-              borderRadius: BorderRadius.circular(17)),
-        ),
-        onTapOutside: (event) => FocusScope.of(context).unfocus(),
-        style: const TextStyle(
-          fontWeight: FontWeight.w500,
-          color: Colors.black,
-        ),
+    return TextFormField(
+      controller: controller,
+      keyboardType: keyboardType,
+      textInputAction: textInputAction,
+      focusNode: focusNode,
+      onChanged: onChanged,
+      autofocus: autofocus ?? false,
+      validator: validator,
+      obscureText: obscureText!,
+      obscuringCharacter: '*',
+      onEditingComplete: onEditingComplete,
+      decoration: InputDecoration(
+        hintStyle: TextStyle(color: hintStyleColor),
+        fillColor: fillColor,
+        filled: filled,
+        contentPadding: EdgeInsets.all(15),
+        isCollapsed: true,
+        isDense: true,
+        labelText: labelText,
+        hintText: hintText,
+        suffixIcon: suffixIcon,
+        border: OutlineInputBorder(
+            borderSide: BorderSide.none,
+            borderRadius: BorderRadius.circular(17)),
+      ),
+      onTapOutside: (event) => FocusScope.of(context).unfocus(),
+      style: TextStyle(
+        fontWeight: FontWeight.w500,
+        color: textColor,
       ),
     );
   }

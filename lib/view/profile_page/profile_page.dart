@@ -30,8 +30,12 @@ class ProfileScreen extends StatelessWidget {
                 Center(
                   child: CircleAvatar(
                     radius: 100,
-                    backgroundImage:
-                        NetworkImage("${c.currentUserData.value.profileImage}"),
+                    backgroundImage: NetworkImage(c
+                                    .currentUserData.value.profileImage ==
+                                "" ||
+                            c.currentUserData.value.profileImage == null
+                        ? "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"
+                        : c.currentUserData.value.profileImage!),
                   ),
                 ),
                 kHeight(context.height * 0.02),
